@@ -29,6 +29,23 @@ class RdKafkaProducer implements Producer
     }
 
     /**
+     * See DOPS-8370 and DOPS-9629 for more details.
+     *
+     * This method is as the original library. Retain it here
+     * and in this structure / position to avoid future
+     * conflicts.
+     *
+     * @param int $timeout
+     * @return void
+     */
+    public function flush(int $timeout = -1): void
+    {
+        if (method_exists($this->producer, 'flush')) {
+            $this->producer->flush($timeout);
+        }
+    }
+
+    /**
      * @param RdKafkaTopic   $destination
      * @param RdKafkaMessage $message
      */
@@ -58,6 +75,7 @@ class RdKafkaProducer implements Producer
             } else {
                 $topic->producev($partition, 0 /* must be 0 */ , $payload, $key, $message->getHeaders());
                 $this->producer->poll(0);
+                $this->flush();
 
                 return;
             }
@@ -65,6 +83,7 @@ class RdKafkaProducer implements Producer
 
         $topic->produce($partition, 0 /* must be 0 */ , $payload, $key);
         $this->producer->poll(0);
+        $this->flush();
     }
 
     /**
