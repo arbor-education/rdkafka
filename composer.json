@@ -1,5 +1,5 @@
 {
-    "name": "arbor-education/rdkafka",
+    "name": "enqueue/rdkafka",
     "type": "library",
     "description": "Message Queue Kafka Transport",
     "keywords": ["messaging", "queue", "kafka"],
